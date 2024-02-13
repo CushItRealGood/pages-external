@@ -46,7 +46,7 @@
             const listItem = document.createElement('li');
             const link = document.createElement('a');
             link.textContent = item.name;
-            link.href = `https://raw.githubusercontent.com/${repoOwner}/${repoName}/gh-pages/${item.path}`;
+            link.href = `https://raw.githubusercontent.com/${repoOwner}/${repoName}/gh-pages/artifacts/${item.path}`;
             link.download = item.name;
             listItem.appendChild(link);
             fileList.appendChild(listItem);
