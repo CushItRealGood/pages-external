@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>File Browser</title>
+  <title>Artifacts</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -31,36 +31,41 @@
   <ul id="file-list"></ul>
 
 <script>
-  function fetchAndDisplayContents(path) {
+  async function fetchAndDisplayContents(path) {
     const repoOwner = 'CushItRealGood';
     const repoName = 'pages-external';
 
-    fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${path}`)
-      .then(response => response.json())
-      .then(data => {
-        const fileList = document.getElementById('file-list');
-        fileList.innerHTML = ''; // Clear previous contents
+    try {
+      const response = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${path}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`);
+      }
 
-        data.forEach(item => {
-          if (item.type === 'file' && item.path.startsWith('artifacts/')) {
-            const listItem = document.createElement('li');
-            const link = document.createElement('a');
-            link.textContent = item.name;
-            link.href = `https://raw.githubusercontent.com/${repoOwner}/${repoName}/gh-pages/artifacts/${item.path}`;
-            link.download = item.name;
-            listItem.appendChild(link);
-            fileList.appendChild(listItem);
-          } else if (item.type === 'dir') {
-            const listItem = document.createElement('li');
-            const link = document.createElement('a');
-            link.textContent = item.name;
-            link.onclick = () => fetchAndDisplayContents(item.path);
-            listItem.appendChild(link);
-            fileList.appendChild(listItem);
-          }
-        });
-      })
-      .catch(error => console.error('Error fetching repository contents:', error));
+      const data = await response.json();
+      const fileList = document.getElementById('file-list');
+      fileList.innerHTML = ''; // Clear previous contents
+
+      data.forEach(item => {
+        if (item.type === 'file' && item.path.startsWith('artifacts/')) {
+          const listItem = document.createElement('li');
+          const link = document.createElement('a');
+          link.textContent = item.name;
+          link.href = `https://raw.githubusercontent.com/${repoOwner}/${repoName}/gh-pages/${item.path}`;
+          link.download = item.name;
+          listItem.appendChild(link);
+          fileList.appendChild(listItem);
+        } else if (item.type === 'dir') {
+          const listItem = document.createElement('li');
+          const link = document.createElement('a');
+          link.textContent = item.name;
+          link.onclick = () => fetchAndDisplayContents(item.path);
+          listItem.appendChild(link);
+          fileList.appendChild(listItem);
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching repository contents:', error);
+    }
   }
 
   // Initial fetch for the "artifacts" directory
