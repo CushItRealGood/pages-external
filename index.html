@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Browser</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      margin-bottom: 5px;
+    }
+    a {
+      text-decoration: none;
+      color: #0366d6;
+      cursor: pointer;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h1>File Browser</h1>
+  <ul id="file-list"></ul>
+
+  <script>
+    function fetchAndDisplayContents(path) {
+      fetch(`https://api.github.com/repos/CushItRealGood/ghpages-test/contents/${path}`)
+        .then(response => response.json())
+        .then(data => {
+          const fileList = document.getElementById('file-list');
+          fileList.innerHTML = ''; // Clear previous contents
+
+          data.forEach(item => {
+            if (item.type === 'file' && item.path.startsWith('artifacts/')) {
+              const listItem = document.createElement('li');
+              const link = document.createElement('a');
+              link.textContent = item.name;
+              link.href = `https://raw.githubusercontent.com/CushItRealGood/ghpages-test/main/${item.path}`;
+              link.download = item.name;
+              listItem.appendChild(link);
+              fileList.appendChild(listItem);
+            } else if (item.type === 'dir') {
+              const listItem = document.createElement('li');
+              const link = document.createElement('a');
+              link.textContent = item.name;
+              link.onclick = () => fetchAndDisplayContents(item.path);
+              listItem.appendChild(link);
+              fileList.appendChild(listItem);
+            }
+          });
+        })
+        .catch(error => console.error('Error fetching repository contents:', error));
+    }
+
+    // Initial fetch for the "artifacts" directory
+    fetchAndDisplayContents('artifacts');
+  </script>
+</body>
+</html>
