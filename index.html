@@ -38,8 +38,8 @@
         // Replace "username" and "repository" with your GitHub username and repository name
         const username = 'CushItRealGood';
         const repository = 'pages-external';
-        const apiUrl = `https://api.github.com/repos/${username}/${repository}/contents`;
-
+        const branch = 'gh-pages'; // Change this to the desired branch
+        const apiUrl = `https://api.github.com/repos/${username}/${repository}/contents?ref=${branch}`;
         // Fetch the contents of the repository
         fetch(apiUrl)
             .then(response => response.json())
