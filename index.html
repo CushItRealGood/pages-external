@@ -32,7 +32,7 @@
 
   <script>
     function fetchAndDisplayContents(path) {
-      fetch(`https://api.github.com/repos/CushItRealGood/ghpages-test/contents/${path}`)
+      fetch(`https://api.github.com/repos/CushItRealGood/pages-external/contents/${path}`)
         .then(response => response.json())
         .then(data => {
           const fileList = document.getElementById('file-list');
@@ -43,7 +43,7 @@
               const listItem = document.createElement('li');
               const link = document.createElement('a');
               link.textContent = item.name;
-              link.href = `https://raw.githubusercontent.com/CushItRealGood/ghpages-test/main/${item.path}`;
+              link.href = `https://raw.githubusercontent.com/CushItRealGood/pages-external/main/${item.path}`;
               link.download = item.name;
               listItem.appendChild(link);
               fileList.appendChild(listItem);
